@@ -29,15 +29,18 @@ jobs:
         run: echo "ARCH=$ARCH_VALUE" >> $GITHUB_ENV
 
       - name: Determine runtime identifier
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          ARCH: ${{ matrix.arch }}
         run: |
-          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
-            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+          if [[ "$PLATFORM" == "macos-latest" ]]; then
+            if [[ "$ARCH" == "arm64" ]]; then
               echo "RID=osx-arm64" >> $GITHUB_ENV
             else
               echo "RID=osx-x64" >> $GITHUB_ENV
             fi
           else
-            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+            if [[ "$ARCH" == "arm64" ]]; then
               echo "RID=linux-arm64" >> $GITHUB_ENV
             else
               echo "RID=linux-x64" >> $GITHUB_ENV
