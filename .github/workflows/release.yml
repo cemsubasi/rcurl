@@ -23,12 +23,12 @@ jobs:
         with:
           dotnet-version: '6.0.x'
 
-			- name: Setup architecture
+      - name: Setup architecture
         env:
           ARCH_VALUE: ${{ matrix.arch }}
         run: echo "ARCH=$ARCH_VALUE" >> $GITHUB_ENV
 			
-			- name: Determine runtime identifier
+      - name: Determine runtime identifier
         run: |
           if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
             if [[ "${{ matrix.arch }}" == "arm64" ]]; then
