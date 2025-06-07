@@ -5,6 +5,7 @@
 
 # dotenv files
 .env
+.mcurl.conf
 
 # User-specific files
 *.rsuser
