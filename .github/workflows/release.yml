@@ -27,7 +27,7 @@ jobs:
         env:
           ARCH_VALUE: ${{ matrix.arch }}
         run: echo "ARCH=$ARCH_VALUE" >> $GITHUB_ENV
-			
+
       - name: Determine runtime identifier
         run: |
           if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
