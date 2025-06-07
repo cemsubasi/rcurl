@@ -53,7 +53,7 @@ jobs:
           tar -czf release/rcurl-${{ matrix.platform == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}.tar.gz -C publish .
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rcurl-${{ matrix.platform == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
           path: release/rcurl-*.tar.gz
@@ -63,25 +63,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download macos arm64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rcurl-macos-arm64
           path: release
 
       - name: Download macos x64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rcurl-macos-x64
           path: release
 
       - name: Download linux arm64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rcurl-linux-arm64
           path: release
 
       - name: Download linux x64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rcurl-linux-x64
           path: release
