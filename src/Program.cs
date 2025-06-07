@@ -3,7 +3,7 @@
 namespace CurlRedirector;
 
 public static class Program {
-  public const string ConfigFileName = ".mcurl.conf";
+  public const string ConfigFileName = ".rcurl.conf";
   public static readonly string ConfPath = Path.Combine(Environment.CurrentDirectory, ConfigFileName);
 
   public static int Main(string[] args) {
@@ -12,6 +12,11 @@ public static class Program {
       Arity = ArgumentArity.ZeroOrMore
 
     };
+    rootCommand.AddValidator((result) => {
+      if (result.Children.Count == 0) {
+        result.ErrorMessage = "You must provide at least one argument.";
+      }
+    });
 
     rootCommand.AddArgument(argsArgument);
 
