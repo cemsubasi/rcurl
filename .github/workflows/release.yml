@@ -94,8 +94,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v1
         with:
           files: release/*.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
