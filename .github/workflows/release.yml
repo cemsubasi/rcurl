@@ -23,8 +23,10 @@ jobs:
         with:
           dotnet-version: '6.0.x'
 
-      - name: Setup architecture
-        run: echo "ARCH=${{ matrix.arch }}" >> $GITHUB_ENV
+			- name: Setup architecture
+        env:
+          ARCH_VALUE: ${{ matrix.arch }}
+        run: echo "ARCH=$ARCH_VALUE" >> $GITHUB_ENV
 			
 			- name: Determine runtime identifier
         run: |
