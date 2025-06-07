@@ -25,9 +25,25 @@ jobs:
 
       - name: Setup architecture
         run: echo "ARCH=${{ matrix.arch }}" >> $GITHUB_ENV
+			
+			- name: Determine runtime identifier
+        run: |
+          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
+            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+              echo "RID=osx-arm64" >> $GITHUB_ENV
+            else
+              echo "RID=osx-x64" >> $GITHUB_ENV
+            fi
+          else
+            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+              echo "RID=linux-arm64" >> $GITHUB_ENV
+            else
+              echo "RID=linux-x64" >> $GITHUB_ENV
+            fi
+          fi
 
       - name: Build project
-        run: dotnet publish -c Release -r ${{ matrix.platform == 'macos-latest' && (matrix.arch == 'arm64' ? 'osx-arm64' : 'osx-x64') || (matrix.platform == 'ubuntu-latest' && (matrix.arch == 'arm64' ? 'linux-arm64' : 'linux-x64')) }} --self-contained true -o ./publish
+        run: dotnet publish -c Release -r $RID --self-contained true -o ./publish
 
       - name: Create archive
         run: |
