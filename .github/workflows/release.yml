@@ -1,4 +1,4 @@
-me: Build and Release
+name: Build and Release
 
 on:
   push:
@@ -44,31 +44,30 @@ jobs:
     needs: build-and-release
     runs-on: ubuntu-latest
     steps:
-      - name: Download all artifacts
+      - name: Download macos arm64 artifact
         uses: actions/download-artifact@v3
         with:
           name: rcurl-macos-arm64
           path: release
-      - uses: actions/download-artifact@v3
+
+      - name: Download macos x64 artifact
+        uses: actions/download-artifact@v3
         with:
           name: rcurl-macos-x64
           path: release
-      - uses: actions/download-artifact@v3
+
+      - name: Download linux arm64 artifact
+        uses: actions/download-artifact@v3
         with:
           name: rcurl-linux-arm64
           path: release
-      - uses: actions/download-artifact@v3
+
+      - name: Download linux x64 artifact
+        uses: actions/download-artifact@v3
         with:
           name: rcurl-linux-x64
           path: release
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
+      - name: List release files
+        run: ls -l release
 
-      - name: Upload release assets
-        uses: softprops/action-gh-release@v1
-        with:
-          files: release/*.tar.gz
