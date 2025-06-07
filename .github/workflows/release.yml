@@ -1,0 +1,74 @@
+me: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        platform: [macos-latest, ubuntu-latest]
+        arch: [x64, arm64]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Setup architecture
+        run: echo "ARCH=${{ matrix.arch }}" >> $GITHUB_ENV
+
+      - name: Build project
+        run: dotnet publish -c Release -r ${{ matrix.platform == 'macos-latest' && (matrix.arch == 'arm64' ? 'osx-arm64' : 'osx-x64') || (matrix.platform == 'ubuntu-latest' && (matrix.arch == 'arm64' ? 'linux-arm64' : 'linux-x64')) }} --self-contained true -o ./publish
+
+      - name: Create archive
+        run: |
+          mkdir -p release
+          tar -czf release/rcurl-${{ matrix.platform == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}.tar.gz -C publish .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: rcurl-${{ matrix.platform == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
+          path: release/rcurl-*.tar.gz
+
+  release:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: rcurl-macos-arm64
+          path: release
+      - uses: actions/download-artifact@v3
+        with:
+          name: rcurl-macos-x64
+          path: release
+      - uses: actions/download-artifact@v3
+        with:
+          name: rcurl-linux-arm64
+          path: release
+      - uses: actions/download-artifact@v3
+        with:
+          name: rcurl-linux-x64
+          path: release
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*.tar.gz
