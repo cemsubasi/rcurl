@@ -6,6 +6,7 @@
 # dotenv files
 .env
 .rcurl.conf
+.github/
 
 # User-specific files
 *.rsuser
