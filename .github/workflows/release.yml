@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         platform: [macos-latest, ubuntu-latest]
-        arch: [x64, arm64]
+        arch: [x64]  # 🔧 SADECE x64
 
     steps:
       - name: Checkout repo
@@ -24,33 +24,21 @@ jobs:
           dotnet-version: '6.0.x'
 
       - name: Setup architecture
-        env:
-          ARCH_VALUE: ${{ matrix.arch }}
-        run: echo "ARCH=$ARCH_VALUE" >> $GITHUB_ENV
+        run: echo "ARCH=${{ matrix.arch }}" >> $GITHUB_ENV
 
       - name: Determine Runtime Identifier
         run: |
           if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
-            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
-              echo "RID=osx-arm64" >> $GITHUB_ENV
-              echo "OSNAME=macos" >> $GITHUB_ENV
-            else
-              echo "RID=osx-x64" >> $GITHUB_ENV
-              echo "OSNAME=macos" >> $GITHUB_ENV
-            fi
+            echo "RID=osx-x64" >> $GITHUB_ENV
+            echo "OSNAME=macos" >> $GITHUB_ENV
           else
-            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
-              echo "RID=linux-arm64" >> $GITHUB_ENV
-              echo "OSNAME=linux" >> $GITHUB_ENV
-            else
-              echo "RID=linux-x64" >> $GITHUB_ENV
-              echo "OSNAME=linux" >> $GITHUB_ENV
-            fi
+            echo "RID=linux-x64" >> $GITHUB_ENV
+            echo "OSNAME=linux" >> $GITHUB_ENV
           fi
 
       - name: Publish binary
         run: |
-          dotnet publish -c Release -r $RID --self-contained true -p:PublishSingleFile=true -o release
+          dotnet publish -c Release -r $RID --self-contained true -o release
 
       - name: Calculate SHA256
         run: |
@@ -72,28 +60,9 @@ jobs:
     needs: build-and-release
     runs-on: ubuntu-latest
     steps:
-      - name: Download macos arm64 artifact
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: rcurl-macos-arm64
-          path: release
-
-      - name: Download macos x64 artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: rcurl-macos-x64
-          path: release
-
-      - name: Download linux arm64 artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: rcurl-linux-arm64
-          path: release
-
-      - name: Download linux x64 artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: rcurl-linux-x64
           path: release
 
       - name: List release files
@@ -109,5 +78,5 @@ jobs:
       - name: Upload release assets
         uses: softprops/action-gh-release@v1
         with:
-          files: release/*.tar.gz
+          files: release/**/*.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
