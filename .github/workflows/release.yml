@@ -28,38 +28,45 @@ jobs:
           ARCH_VALUE: ${{ matrix.arch }}
         run: echo "ARCH=$ARCH_VALUE" >> $GITHUB_ENV
 
-      - name: Determine runtime identifier
-        env:
-          PLATFORM: ${{ matrix.platform }}
-          ARCH: ${{ matrix.arch }}
+      - name: Determine Runtime Identifier
         run: |
-          if [[ "$PLATFORM" == "macos-latest" ]]; then
-            if [[ "$ARCH" == "arm64" ]]; then
+          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
+            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
               echo "RID=osx-arm64" >> $GITHUB_ENV
+              echo "OSNAME=macos" >> $GITHUB_ENV
             else
               echo "RID=osx-x64" >> $GITHUB_ENV
+              echo "OSNAME=macos" >> $GITHUB_ENV
             fi
           else
-            if [[ "$ARCH" == "arm64" ]]; then
+            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
               echo "RID=linux-arm64" >> $GITHUB_ENV
+              echo "OSNAME=linux" >> $GITHUB_ENV
             else
               echo "RID=linux-x64" >> $GITHUB_ENV
+              echo "OSNAME=linux" >> $GITHUB_ENV
             fi
           fi
 
-      - name: Build project
-        run: dotnet publish -c Release -r $RID --self-contained true -o ./publish
-
-      - name: Create archive
+      - name: Publish binary
         run: |
-          mkdir -p release
-          tar -czf release/rcurl-${{ matrix.platform == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}.tar.gz -C publish .
+          dotnet publish -c Release -r $RID --self-contained true -p:PublishSingleFile=true -o release
+
+      - name: Calculate SHA256
+        run: |
+          cd release
+          shasum -a 256 rcurl > rcurl.sha256
+          cd ..
+
+      - name: Archive
+        run: |
+          tar -czf rcurl-${{ env.OSNAME }}-${{ matrix.arch }}.tar.gz -C release rcurl rcurl.sha256
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rcurl-${{ matrix.platform == 'macos-latest' && 'macos' || 'linux' }}-${{ matrix.arch }}
-          path: release/rcurl-*.tar.gz
+          name: rcurl-${{ env.OSNAME }}-${{ matrix.arch }}
+          path: rcurl-${{ env.OSNAME }}-${{ matrix.arch }}.tar.gz
 
   release:
     needs: build-and-release
