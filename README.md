@@ -38,10 +38,10 @@ rcurl redirect add <source-hostname> <target-hostname>
 For example:
 
 ```
-rcurl redirect add api.local staging.api.com
+rcurl redirect add api.example.com localhost:80
 ```
 
-Now, if you run any curl command that includes `api.local`, rcurl will automatically replace `api.local` with `staging.api.com` before executing the request.
+Now, if you run any curl command that includes `api.example.com`, rcurl will automatically replace `api.example.com` with `localhost:80` before executing the request.
 
 ---
 
@@ -76,6 +76,18 @@ rcurl curl -X GET https://example.com/api/data
 
 The request will actually be sent to `https://api.example.com/api/data`.
 
+List redirect rules:
+
+```
+rcurl redirect ls
+```
+
+Remove redirect rules:
+
+```
+rcurl redirect rm example.com
+```
+
 ---
 
 ## Development & Build
@@ -102,6 +114,5 @@ MIT License — see the LICENSE file for details.
 
 ## Contact
 
-Created and maintained by Cem Subaşı  
-GitHub: [@cemsubasi](https://github.com/cemsubasi)  
+Created and maintained by Cem Subaşı
 Email: cemsubasi@me.com

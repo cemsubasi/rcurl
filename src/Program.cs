@@ -10,8 +10,8 @@ public static class Program {
     var rootCommand = new RootCommand("A simple command line application to redirect curl requests.");
     var argsArgument = new Argument<List<string>>("args") {
       Arity = ArgumentArity.ZeroOrMore
-
     };
+
     rootCommand.AddValidator((result) => {
       if (result.Children.Count == 0) {
         result.ErrorMessage = "You must provide at least one argument.";

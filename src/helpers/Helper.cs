@@ -35,4 +35,17 @@ public static class Helper {
     if (string.IsNullOrWhiteSpace(input)) return "";
     return input.Length <= maxLength ? input : input.Substring(0, maxLength - 3) + "...";
   }
+
+  public static string ReplaceRedirects(string input, List<ConfigFileModel>? defaultRedirects = null) {
+    if (defaultRedirects is null || !defaultRedirects.Any() || string.IsNullOrEmpty(input)) {
+      return input;
+    }
+
+    foreach (var each in defaultRedirects) {
+      if (input.Contains(each.Source)) {
+        return input.Replace(each.Source, each.Destination);
+      }
+    }
+    return input;
+  }
 }
