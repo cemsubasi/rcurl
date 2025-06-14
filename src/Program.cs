@@ -4,7 +4,7 @@ namespace CurlRedirector;
 
 public static class Program {
   public const string ConfigFileName = ".rcurl.conf";
-  public static readonly string ConfPath = Path.Combine(Environment.CurrentDirectory, ConfigFileName);
+  public static readonly string ConfPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ConfigFileName);
 
   public static int Main(string[] args) {
     var rootCommand = new RootCommand("A simple command line application to redirect curl requests.");

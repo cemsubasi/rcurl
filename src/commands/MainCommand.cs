@@ -68,6 +68,5 @@ public partial class Commands {
     if (!string.IsNullOrEmpty(jqError))
       Console.Error.WriteLine(jqError);
   }
-
 }
 
