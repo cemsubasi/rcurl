@@ -35,14 +35,12 @@ public partial class Commands {
     };
 
     var process = Process.Start(psi)!;
-    var output = process.StandardOutput.ReadToEnd();
-    var error = process.StandardError.ReadToEnd();
-    process.WaitForExit();
+    var output = await process.StandardOutput.ReadToEndAsync();
+    var error = await process.StandardError.ReadToEndAsync();
+    await process.WaitForExitAsync();
 
-    Console.WriteLine(output);
     if (!string.IsNullOrEmpty(error)) {
       Console.Error.WriteLine(error);
-      return;
     }
 
     var jqpsi = new ProcessStartInfo {
@@ -57,16 +55,29 @@ public partial class Commands {
     var jqProcess = Process.Start(jqpsi)!;
 
     await jqProcess.StandardInput.WriteAsync(output);
+    await jqProcess.StandardInput.FlushAsync();
+
     jqProcess.StandardInput.Close();
 
     var jqOutput = await jqProcess.StandardOutput.ReadToEndAsync();
     var jqError = await jqProcess.StandardError.ReadToEndAsync();
+    await jqProcess.WaitForExitAsync();
 
-    jqProcess.WaitForExit();
+
+
+    Console.WriteLine("--- JQ Output ---");
+    if (jqOutput == null) {
+      Console.WriteLine("jqOutput is null");
+    } else {
+      if (string.IsNullOrWhiteSpace(jqOutput)) {
+        Console.WriteLine("jqOutput is empty or whitespace");
+      }
+    }
 
     Console.WriteLine(jqOutput);
     if (!string.IsNullOrEmpty(jqError))
       Console.Error.WriteLine(jqError);
+
   }
 }
 
