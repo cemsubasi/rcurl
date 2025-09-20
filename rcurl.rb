@@ -1,8 +1,8 @@
 class Rcurl < Formula
   desc "rcurl - A CLI tool"
   homepage "https://github.com/cemsubasi/rcurl"
-  url "https://github.com/cemsubasi/rcurl/releases/download/v1.0.17/rcurl-osx-arm64.tar.gz"
-  sha256 "e6be1cf8e6d8a3a21159517b2592243ed126036f24a665e32646b40cc95adbe7"
+  url "https://github.com/cemsubasi/rcurl/releases/download/v1.0.18/rcurl-osx-arm64.tar.gz"
+  sha256 "f8f44ffeed0c21f5c050d09c7687499fa10d3211f4e2d808d6037994982c5"
   
 
   def install
